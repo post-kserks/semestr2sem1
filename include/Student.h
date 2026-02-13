@@ -25,6 +25,9 @@ public:
     // Геттер для имени
     std::string getName() const;
 
+    // Геттер для списка оценок
+    const std::vector<int>& getGrades() const;
+
 private:
     int studentId; // Уникальный номер студента
     std::string name; // Имя студента

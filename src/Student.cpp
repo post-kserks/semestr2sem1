@@ -35,3 +35,8 @@ int Student::getId() const {
 std::string Student::getName() const {
     return name;
 }
+
+// Возвращает ссылку на вектор оценок
+const std::vector<int>& Student::getGrades() const {
+    return grades;
+}
