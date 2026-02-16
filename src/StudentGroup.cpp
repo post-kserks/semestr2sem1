@@ -11,42 +11,43 @@ void StudentGroup::addStudent(const Student& student) {
     students.push_back(student);
 }
 
-// Ищем студента по ID
+// Ищем студента по ID (неконстантная версия)
 Student* StudentGroup::findStudentById(int id) {
-    // Проходим по всем студентам
-    for (int i = 0; i < students.size(); i++) {
-        // Используем твой метод getId()
-        if (students[i].getId() == id) {
-            return &students[i];  // Возвращаем указатель на найденного студента
+    for (auto& student : students) {
+        if (student.getId() == id) {
+            return &student;
         }
     }
-    return nullptr;  // Не нашли
+    return nullptr;
+}
+
+// Ищем студента по ID (константная версия)
+const Student* StudentGroup::findStudentById(int id) const {
+    for (const auto& student : students) {
+        if (student.getId() == id) {
+            return &student;
+        }
+    }
+    return nullptr;
 }
 
 // Считаем средний балл по всей группе
-double StudentGroup::calculateGroupAverage() {
-    // Если в группе нет студентов
-    if (students.size() == 0) {
+double StudentGroup::calculateGroupAverage() const {
+    if (students.empty()) {
         return 0.0;
     }
 
     double totalSum = 0.0;
     int totalGrades = 0;
 
-    // Проходим по всем студентам
-    for (int i = 0; i < students.size(); i++) {
-        // Получаем оценки текущего студента
-        // У тебя в Student.h должен быть геттер getGrades()
-        std::vector<int> studentGrades = students[i].getGrades();
-
-        // Суммируем оценки
-        for (int j = 0; j < studentGrades.size(); j++) {
-            totalSum += studentGrades[j];
+    for (const auto& student : students) {
+        const auto& studentGrades = student.getGrades();
+        for (int grade : studentGrades) {
+            totalSum += grade;
             totalGrades++;
         }
     }
 
-    // Если нет ни одной оценки
     if (totalGrades == 0) {
         return 0.0;
     }
@@ -55,6 +56,6 @@ double StudentGroup::calculateGroupAverage() {
 }
 
 // Возвращаем название группы
-std::string StudentGroup::getGroupName() {
+std::string StudentGroup::getGroupName() const {
     return groupName;
 }

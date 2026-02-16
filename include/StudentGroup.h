@@ -17,8 +17,9 @@ public:
     // Методы
     void addStudent(const Student& student);
     Student* findStudentById(int id);
-    double calculateGroupAverage();
-    std::string getGroupName();
+    const Student* findStudentById(int id) const;
+    double calculateGroupAverage() const;
+    std::string getGroupName() const;
 };
 
 #endif
