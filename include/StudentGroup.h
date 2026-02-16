@@ -20,6 +20,8 @@ public:
     const Student* findStudentById(int id) const;
     double calculateGroupAverage() const;
     std::string getGroupName() const;
+    size_t getStudentCount() const;
+    void printAllStudents() const;
 };
 
 #endif

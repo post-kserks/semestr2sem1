@@ -59,3 +59,15 @@ double StudentGroup::calculateGroupAverage() const {
 std::string StudentGroup::getGroupName() const {
     return groupName;
 }
+
+// Возвращаем количество студентов
+size_t StudentGroup::getStudentCount() const {
+    return students.size();
+}
+
+// Выводим всех студентов группы
+void StudentGroup::printAllStudents() const {
+    for (const auto& student : students) {
+        student.printInfo();
+    }
+}
