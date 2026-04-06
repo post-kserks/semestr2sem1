@@ -28,6 +28,26 @@ make
 ./StudentSystem
 ```
 
+## Запуск тестов локально
+
+```bash
+# 1. Конфигурация с включенными тестами
+cmake -S . -B build -DBUILD_TESTING=ON
+
+# 2. Сборка
+cmake --build build --parallel
+
+# 3. Запуск всех тестов
+ctest --test-dir build --output-on-failure
+```
+
+## CI/CD
+
+В репозитории добавлен workflow `.github/workflows/ci-cd.yml`:
+
+*   **CI** — запускается на `push` и `pull_request` в ветки `main` и `rebuild`, собирает проект и запускает тесты.
+*   **CD** — запускается при пуше тега формата `v*`, собирает release-бинарник и публикует архив в GitHub Release.
+
 ## Описание классов и методов
 
 ### Класс `Student`

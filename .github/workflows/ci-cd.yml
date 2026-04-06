@@ -1,0 +1,66 @@
+name: CI-CD
+
+on:
+  pull_request:
+    branches:
+      - main
+      - rebuild
+  push:
+    branches:
+      - main
+      - rebuild
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: Build and Test (${{ matrix.os }}, ${{ matrix.build_type }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_TESTING=ON
+
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure -C ${{ matrix.build_type }}
+
+  cd-release:
+    name: Release Binary (tag only)
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Release build
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+
+      - name: Build Release binary
+        run: cmake --build build --config Release --parallel
+
+      - name: Package binary
+        run: |
+          mkdir -p dist
+          cp build/StudentSystem dist/StudentSystem-linux-x86_64
+          tar -czf dist/StudentSystem-linux-x86_64.tar.gz -C dist StudentSystem-linux-x86_64
+
+      - name: Publish GitHub Release artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/StudentSystem-linux-x86_64.tar.gz

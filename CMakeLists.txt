@@ -1,18 +1,29 @@
-cmake_minimum_required(VERSION 3.10) 
+cmake_minimum_required(VERSION 3.10)
 
-# Имя проекта
-project(StudentSystem) 
+project(StudentSystem LANGUAGES CXX)
 
-# Указываем стандарт C++ (C++17) 
-set(CMAKE_CXX_STANDARD 17) 
-set(CMAKE_CXX_STANDARD_REQUIRED True) 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Добавляем директорию с заголовочными файлами в путь поиска
-include_directories(include) 
+add_library(student_core
+    src/Student.cpp
+    src/StudentGroup.cpp
+)
+target_include_directories(student_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Собираем список всех исходных файлов в директории src
-file(GLOB SOURCES "src/*.cpp") 
+add_executable(StudentSystem main.cpp)
+target_link_libraries(StudentSystem PRIVATE student_core)
 
-# Создаем исполняемый файл из main.cpp и найденных исходников
-# Обратите внимание: main.cpp должен быть в корне или добавлен сюда, если он есть
-add_executable(StudentSystem main.cpp ${SOURCES}) 
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(student_system_tests
+        tests/test_main.cpp
+        tests/student_tests.cpp
+        tests/student_group_tests.cpp
+    )
+    target_link_libraries(student_system_tests PRIVATE student_core)
+    target_include_directories(student_system_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+    add_test(NAME student_system_tests COMMAND student_system_tests)
+endif()
